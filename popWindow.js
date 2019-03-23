@@ -53,7 +53,11 @@ window.addEventListener('click', function (evt) {
   if (evt.detail === 3) {
     // alert("triple click!");
     // console.log('triple click!');
-    popShowSelectedContent();
+    chrome.storage.sync.get('tripleClickEnabled', function(data) {
+      if(data.tripleClickEnabled){
+        popShowSelectedContent();
+      }
+    });
   }
 });
 

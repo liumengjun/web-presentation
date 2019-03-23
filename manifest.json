@@ -11,7 +11,8 @@
   "content_scripts":[
     {
       "matches": ["http://*/*","https://*/*","file://*/*"],
-      "css": ["popWindow.css"]
+      "css": ["popWindow.css"],
+      "js": ["popWindow.js"]
     }
   ],
   "page_action": {
@@ -29,5 +30,6 @@
     "48": "images/get_started48.png",
     "128": "images/get_started128.png"
   },
+  "homepage_url": "https://github.com/liumengjun/web-presentation",
   "manifest_version": 2
 }
