@@ -23,6 +23,63 @@ if (!popWindow) {
 }
 // alert(document.getElementById('popWindow'));
 
+let allBodyEles = document.body.children;
+var slideLevel = 1;
+var toSlideElementList = [];
+var currentSlideShowIndex = 0;
+if (allBodyEles.length <= 3) {
+  slideLevel = 2;
+}
+for (var i = 0; i < allBodyEles.length; i++) {
+  var curEle = allBodyEles[i];
+  if (curEle.classList.contains('popWindow')) {
+    break;
+  }
+  if (slideLevel == 2) {
+    if (curEle.childElementCount) {
+      concatToSlideElementList(curEle.children);
+    } else {
+      pushToSlideElementList(curEle);
+    }
+  } else {
+    pushToSlideElementList(curEle);
+  }
+}
+
+function concatToSlideElementList(elements) {
+  for (var ele of elements) {
+    pushToSlideElementList(ele);
+  }
+}
+
+function pushToSlideElementList(ele) {
+  if (ele.tagName === 'UL' || ele.tagName === 'OL' || ele.tagName === 'DL') {
+    concatToSlideElementList(ele.children);
+  } else {
+    toSlideElementList.push(ele);
+  }
+}
+
+function showSlideContent() {
+  showPopDiv(toSlideElementList[currentSlideShowIndex].outerHTML);
+}
+
+function showNextSlideContent() {
+  if (currentSlideShowIndex == toSlideElementList.length - 1) {
+    return;
+  }
+  currentSlideShowIndex++;
+  showSlideContent();
+}
+
+function showPreviousSlideContent() {
+  if (currentSlideShowIndex == 0) {
+    return;
+  }
+  currentSlideShowIndex--;
+  showSlideContent();
+}
+
 function popShowSelectedContent() {
   var selObj = window.getSelection();
   if (!selObj.anchorNode) {
@@ -62,8 +119,23 @@ window.addEventListener('click', function (evt) {
 });
 
 /**
+ * 鼠标滚轮事件
+ */
+window.addEventListener('mousewheel', function (evt) {
+  console.log(evt);
+  if (popWindow.style.display !== 'none') {
+    if (evt.deltaY < 0) {
+      showPreviousSlideContent();
+    } else {
+      showNextSlideContent();
+    }
+  }
+});
+
+/**
  * 键盘监听事件
  * Alt + P: pop show selected content
+ * Alt + S: start slide show
  * Esc: close pop div
  */
 var lastAltKey = false;
@@ -90,6 +162,13 @@ window.addEventListener('keyup', function (evt) {
         closePopDiv();
       } else {
         popShowSelectedContent();
+      }
+    }
+  }
+  if (evt.keyCode === 83) { // S
+    if (lastAltKey && (evt.timeStamp - altKeyTimeStamp < 300)) {
+      if (popWindow.style.display === 'none') {
+        showSlideContent();
       }
     }
   }
