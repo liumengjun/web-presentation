@@ -36,7 +36,7 @@ function collectToSlideContents(maxLevel, curLevel, nodeList) {
     if (curNode.nodeType === 3) { // #text
       var text = curNode.textContent.trim();
       if (text !== '') {
-        toSlideElementList.push(text);
+        toSlideElementList.push(curNode);
       }
       continue;
     }
@@ -85,8 +85,8 @@ function pushToSlideElementList(ele) {
 var currentSlideShowIndex = 0;
 
 function showSlideContent() {
-  var ele = toSlideElementList[currentSlideShowIndex];
-  showPopDiv(ele.outerHTML || ele);
+  var node = toSlideElementList[currentSlideShowIndex];
+  showPopDiv(node.outerHTML || node.textContent.trim());
 }
 
 function showNextSlideContent() {
@@ -121,13 +121,26 @@ function popShowSelectedContent() {
   if (img) {
     // console.log(img.outerHTML);
     showPopDiv(img.outerHTML);
+    updateSlideIndex(img);
     return;
   }
   var text = selObj.toString().trim();
   if (text) {
     // console.log(text);
     showPopDiv(text);
+    updateSlideIndex(selObj.anchorNode);
     return;
+  }
+}
+
+function updateSlideIndex(targetNode) {
+  var idx = toSlideElementList.findIndex(function (n) {
+    return n === targetNode;
+  });
+  if (idx !== -1) {
+    currentSlideShowIndex = idx;
+  } else if (targetNode.parentNode) {
+    updateSlideIndex(targetNode.parentNode);
   }
 }
 
