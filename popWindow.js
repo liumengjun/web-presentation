@@ -65,7 +65,7 @@ function showSlideContent() {
 }
 
 function showNextSlideContent() {
-  if (currentSlideShowIndex == toSlideElementList.length - 1) {
+  if (currentSlideShowIndex >= toSlideElementList.length - 1) {
     return;
   }
   currentSlideShowIndex++;
@@ -73,7 +73,7 @@ function showNextSlideContent() {
 }
 
 function showPreviousSlideContent() {
-  if (currentSlideShowIndex == 0) {
+  if (currentSlideShowIndex <= 0) {
     return;
   }
   currentSlideShowIndex--;
@@ -122,7 +122,7 @@ window.addEventListener('click', function (evt) {
  * 鼠标滚轮事件
  */
 window.addEventListener('mousewheel', function (evt) {
-  console.log(evt);
+  // console.log(evt);
   if (popWindow.style.display !== 'none') {
     if (evt.deltaY < 0) {
       showPreviousSlideContent();
@@ -138,8 +138,6 @@ window.addEventListener('mousewheel', function (evt) {
  * Alt + S: start slide show
  * Esc: close pop div
  */
-var lastAltKey = false;
-var altKeyTimeStamp = 0;
 window.addEventListener('keyup', function (evt) {
   // console.log(evt);
   if (evt.target.tagName !== 'BODY') {
@@ -151,27 +149,16 @@ window.addEventListener('keyup', function (evt) {
     }
     return;
   }
-  if (evt.keyCode === 18) { // Alt
-    lastAltKey = true;
-    altKeyTimeStamp = evt.timeStamp;
-    return;
-  }
-  if (evt.keyCode === 80) { // p
-    if (lastAltKey && (evt.timeStamp - altKeyTimeStamp < 300)) {
-      if (popWindow.style.display !== 'none') {
-        closePopDiv();
-      } else {
-        popShowSelectedContent();
-      }
+  if (evt.altKey && evt.keyCode === 80) { // Alt + P
+    if (popWindow.style.display !== 'none') {
+      closePopDiv();
+    } else {
+      popShowSelectedContent();
     }
   }
-  if (evt.keyCode === 83) { // S
-    if (lastAltKey && (evt.timeStamp - altKeyTimeStamp < 300)) {
-      if (popWindow.style.display === 'none') {
-        showSlideContent();
-      }
+  if (evt.altKey && evt.keyCode === 83) { // Alt + S
+    if (popWindow.style.display === 'none') {
+      showSlideContent();
     }
   }
-  lastAltKey = false;
-  altKeyTimeStamp = 0;
 });
