@@ -23,45 +23,70 @@ if (!popWindow) {
 }
 // alert(document.getElementById('popWindow'));
 
-let allBodyEles = document.body.children;
 var slideLevel = 1;
-var toSlideElementList = [];
-var currentSlideShowIndex = 0;
-if (allBodyEles.length <= 3) {
+if (document.body.childElementCount <= 3) {
   slideLevel = 2;
 }
-for (var i = 0; i < allBodyEles.length; i++) {
-  var curEle = allBodyEles[i];
-  if (curEle.classList.contains('popWindow')) {
-    break;
-  }
-  if (slideLevel == 2) {
-    if (curEle.childElementCount) {
-      concatToSlideElementList(curEle.children);
-    } else {
-      pushToSlideElementList(curEle);
-    }
-  } else {
-    pushToSlideElementList(curEle);
-  }
-}
+var toSlideElementList = [];
+collectToSlideContents(slideLevel, 0, document.body.childNodes);
 
-function concatToSlideElementList(elements) {
-  for (var ele of elements) {
-    pushToSlideElementList(ele);
+function collectToSlideContents(maxLevel, curLevel, nodeList) {
+  for (var i = 0; i < nodeList.length; i++) {
+    var curNode = nodeList[i];
+    if (curNode.nodeType === 3) { // #text
+      var text = curNode.textContent.trim();
+      if (text !== '') {
+        toSlideElementList.push(text);
+      }
+      continue;
+    }
+    if (curNode.nodeType !== 1) {
+      continue;
+    }
+    // now curNode is Element
+    if (curNode.tagName === 'BR' || curNode.tagName === 'HR') {
+      continue;
+    }
+    if (curNode.classList.contains('popWindow')) {
+      break;
+    }
+    if (curLevel >= maxLevel) {
+      pushToSlideElementList(curNode);
+    } else {
+      var childNodes = curNode.childNodes;
+      if (childNodes && childNodes.length) {
+        collectToSlideContents(maxLevel, curLevel + 1, childNodes);
+      } else {
+        pushToSlideElementList(curNode);
+      }
+    }
   }
 }
 
 function pushToSlideElementList(ele) {
   if (ele.tagName === 'UL' || ele.tagName === 'OL' || ele.tagName === 'DL') {
-    concatToSlideElementList(ele.children);
+    collectToSlideContents(0, 0, ele.childNodes);
   } else {
-    toSlideElementList.push(ele);
+    var hasImg = false;
+    for (var childEle of ele.children) {
+      if (childEle.tagName === 'IMG') {
+        hasImg = true;
+        break;
+      }
+    }
+    if (hasImg) {
+      collectToSlideContents(0, 0, ele.childNodes);
+    } else {
+      toSlideElementList.push(ele);
+    }
   }
 }
 
+var currentSlideShowIndex = 0;
+
 function showSlideContent() {
-  showPopDiv(toSlideElementList[currentSlideShowIndex].outerHTML);
+  var ele = toSlideElementList[currentSlideShowIndex];
+  showPopDiv(ele.outerHTML || ele);
 }
 
 function showNextSlideContent() {
