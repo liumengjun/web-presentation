@@ -3,7 +3,15 @@
   <head>
     <style>
       body {
-        width: 120px;
+        width: 400px;
+        padding: 15px;
+      }
+      form label {
+        display: inline-block;
+        width: 50px;
+      }
+      div.config-box {
+        padding-top: 10px;
       }
     </style>
   </head>
@@ -14,6 +22,17 @@
         triple click pop
       </label>
     </div>
+
+    <div class="config-box">
+      <label>Select Container Outline to show presentation</label>
+      <form>
+        <fieldset><label>Id</label><input id="in_container_id"/></fieldset>
+        <fieldset><label>Tag</label><input id="in_container_tag"/></fieldset>
+        <fieldset><label>Classes</label><input id="in_container_classes"/></fieldset>
+        <fieldset><button id="btn_container_confirm">Confirm</button></fieldset>
+      </form>
+    </div>
     <script src="options.js"></script>
+    <script src="popup.js"></script>
   </body>
 </html>

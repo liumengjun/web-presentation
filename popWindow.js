@@ -42,7 +42,7 @@ function collectToSlideContents(maxLevel, curLevel, nodeList) {
       continue;
     }
     // now curNode is Element
-    if (curNode.tagName === 'BR' || curNode.tagName === 'HR') {
+    if (curNode.tagName === 'BR' || curNode.tagName === 'HR' || curNode.tagName === 'SCRIPT') {
       continue;
     }
     if (curNode.classList.contains('popWindow')) {
@@ -101,6 +101,18 @@ function showPreviousSlideContent() {
   }
   currentSlideShowIndex--;
   showSlideContent();
+}
+
+function reCollectSlideElementsByContainer(container) {
+  if (!container) {
+    console.log('select none');
+    return false;
+  }
+  console.log('set container{id: ' + container.id + ', tag: ' + container.tagName + ', classes: ' + container.className + '}');
+  toSlideElementList.length = 0;
+  collectToSlideContents(slideLevel, 0, container.childNodes);
+  currentSlideShowIndex = 0;
+  return true;
 }
 
 function popShowSelectedContent() {
@@ -197,4 +209,48 @@ window.addEventListener('keyup', function (evt) {
       showSlideContent();
     }
   }
+});
+
+window.addEventListener('set_container', function (evt) {
+  // console.log(evt);
+  console.log(evt.detail);
+  var id = evt.detail.id;
+  var tagName = evt.detail.tagName;
+  var classes = evt.detail.classes;
+  if (id) {
+    var container = document.getElementById(id);
+    return reCollectSlideElementsByContainer(container);
+  }
+  if (!tagName) {
+    console.log('select none');
+    return false;
+  }
+  var elements = document.getElementsByTagName(tagName);
+  if (!elements.length) {
+    console.log('select none');
+    return false;
+  }
+  if (!classes) {
+    return reCollectSlideElementsByContainer(elements[0]);
+  }
+  var classesArr = classes.split(' ').filter(c => c.toLowerCase());
+  var matchedEles = [];
+  for (var ele of elements) {
+    var classList = [];
+    for (var val of ele.classList) {
+      classList.push(val.toLowerCase());
+    }
+    var matchClasses = true;
+    for (var c of classesArr) {
+      matchClasses = matchClasses && classList.includes(c);
+    }
+    if (matchClasses) {
+      matchedEles.push(ele);
+    }
+  }
+  if (!matchedEles.length) {
+    console.log('select none');
+    return false;
+  }
+  return reCollectSlideElementsByContainer(matchedEles[0]);
 });
