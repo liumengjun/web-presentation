@@ -6,5 +6,6 @@
 
 ## Features
 
-- [x] Pop Window
-- [x] Slide
+- [x] Pop Window, show selected content
+- [x] Slide, show contents in sequence, controlled by mouse wheel
+- [x] Customize dom container to show presentation
