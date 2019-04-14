@@ -1,7 +1,5 @@
 function showPopDiv(content) {
   document.getElementById('popWindow').style.display = 'block';
-  document.getElementById('popWindowClose').style.display = 'block';
-  document.getElementById('popContent').style.display = 'block';
   document.getElementById('popContentInner').innerHTML = content;
 }
 function closePopDiv() {
@@ -12,9 +10,9 @@ var popWindow = document.getElementById('popWindow');
 if (!popWindow) {
   var domStr = '<div id="popWindow" class="popWindow" style="display: none;">' +
     '  <div id="popContent" class="popContent">' +
-    '    <table style="width: 100%;height: 100%;"><tr><td id="popContentInner"></td></tr></table>' +
+    '    <div id="popContentInner" class="popContentInner"></div>' +
     '  </div>' +
-    '  <div id="popWindowClose" class="popWindowClose" onclick="document.getElementById(\'popWindow\').style.display = \'none\'" style="display: none;cursor:pointer;text-decoration: none;">' +
+    '  <div id="popWindowClose" class="popWindowClose" onclick="document.getElementById(\'popWindow\').style.display = \'none\'" style="cursor:pointer;text-decoration: none;">' +
     '    ╳' +
     '  </div>' +
     '</div>';
