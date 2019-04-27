@@ -1,4 +1,5 @@
 const popWindowId = 'popWindowLmj1e9q2hbsGdh9IEOJVS27GDQLAREHovry';
+const containerKeyPrefix = 'show_container:';
 function showPopDiv(content) {
   document.getElementById(popWindowId).style.display = 'block';
   document.getElementById(popWindowId+'ContentInner').innerHTML = content;
@@ -106,6 +107,47 @@ function showPreviousSlideContent() {
   showSlideContent();
 }
 
+function getCustomizedContainer(conf) {
+  var id = conf.id;
+  var tagName = conf.tagName;
+  var classes = conf.classes;
+  if (id) {
+    return document.getElementById(id);
+  }
+  if (!tagName) {
+    console.log('select none');
+    return false;
+  }
+  var elements = document.getElementsByTagName(tagName);
+  if (!elements.length) {
+    console.log('select none');
+    return false;
+  }
+  if (!classes) {
+    return elements[0];
+  }
+  var classesArr = classes.split(' ').filter(c => c.toLowerCase());
+  var matchedEles = [];
+  for (var ele of elements) {
+    var classList = [];
+    for (var val of ele.classList) {
+      classList.push(val.toLowerCase());
+    }
+    var matchClasses = true;
+    for (var c of classesArr) {
+      matchClasses = matchClasses && classList.includes(c);
+    }
+    if (matchClasses) {
+      matchedEles.push(ele);
+    }
+  }
+  if (!matchedEles.length) {
+    console.log('select none');
+    return false;
+  }
+  return matchedEles[0];
+}
+
 function reCollectSlideElementsByContainer(container) {
   if (!container) {
     console.log('select none');
@@ -156,6 +198,16 @@ function updateSlideIndex(targetNode) {
     updateSlideIndex(targetNode.parentNode);
   }
 }
+
+// 根据之前设置的 show container 配置，初始化 slide 内容
+let containerKey = containerKeyPrefix + location.host;
+chrome.storage.sync.get(containerKey, function (data) {
+  let conf = data[containerKey];
+  console.log('get', containerKey, 'is', conf);
+  if (!conf) return;
+  let container = getCustomizedContainer(conf);
+  reCollectSlideElementsByContainer(container);
+});
 
 window.addEventListener('click', function (evt) {
   if (evt.detail === 3) {
@@ -213,46 +265,12 @@ window.addEventListener('keyup', function (evt) {
   }
 });
 
+/**
+ * CustomEvent('set_container'), 设置 show container
+ */
 window.addEventListener('set_container', function (evt) {
   // console.log(evt);
   console.log(evt.detail);
-  var id = evt.detail.id;
-  var tagName = evt.detail.tagName;
-  var classes = evt.detail.classes;
-  if (id) {
-    var container = document.getElementById(id);
-    return reCollectSlideElementsByContainer(container);
-  }
-  if (!tagName) {
-    console.log('select none');
-    return false;
-  }
-  var elements = document.getElementsByTagName(tagName);
-  if (!elements.length) {
-    console.log('select none');
-    return false;
-  }
-  if (!classes) {
-    return reCollectSlideElementsByContainer(elements[0]);
-  }
-  var classesArr = classes.split(' ').filter(c => c.toLowerCase());
-  var matchedEles = [];
-  for (var ele of elements) {
-    var classList = [];
-    for (var val of ele.classList) {
-      classList.push(val.toLowerCase());
-    }
-    var matchClasses = true;
-    for (var c of classesArr) {
-      matchClasses = matchClasses && classList.includes(c);
-    }
-    if (matchClasses) {
-      matchedEles.push(ele);
-    }
-  }
-  if (!matchedEles.length) {
-    console.log('select none');
-    return false;
-  }
-  return reCollectSlideElementsByContainer(matchedEles[0]);
+  let container = getCustomizedContainer(evt.detail);
+  return reCollectSlideElementsByContainer(container);
 });
