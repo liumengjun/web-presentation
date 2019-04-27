@@ -1,25 +1,28 @@
+const popWindowId = 'popWindowLmj1e9q2hbsGdh9IEOJVS27GDQLAREHovry';
 function showPopDiv(content) {
-  document.getElementById('popWindow').style.display = 'block';
-  document.getElementById('popContentInner').innerHTML = content;
+  document.getElementById(popWindowId).style.display = 'block';
+  document.getElementById(popWindowId+'ContentInner').innerHTML = content;
 }
 function closePopDiv() {
-  document.getElementById('popWindow').style.display = 'none';
+  document.getElementById(popWindowId).style.display = 'none';
 }
-var popWindow = document.getElementById('popWindow');
-// alert(popWindow);
+var popWindow = document.getElementById(popWindowId);
 if (!popWindow) {
-  var domStr = '<div id="popWindow" class="popWindow" style="display: none;">' +
-    '  <div id="popContent" class="popContent">' +
-    '    <div id="popContentInner" class="popContentInner"></div>' +
+  var domStr = '  <div id="'+popWindowId+'Content" class="'+popWindowId+'Content">' +
+    '    <div id="'+popWindowId+'ContentInner" class="'+popWindowId+'ContentInner"></div>' +
     '  </div>' +
-    '  <div id="popWindowClose" class="popWindowClose" onclick="document.getElementById(\'popWindow\').style.display = \'none\'" style="cursor:pointer;text-decoration: none;">' +
+    '  <div id="'+popWindowId+'Close" class="'+popWindowId+'Close" onclick="document.getElementById(\''+popWindowId+'\').style.display = \'none\'" style="cursor:pointer;text-decoration: none;">' +
     '    ╳' +
-    '  </div>' +
-    '</div>';
-  document.body.innerHTML += (domStr);
-  popWindow = document.getElementById('popWindow');
+    '  </div>';
+  // create element such as '<div id="popWindow" class="popWindow" style="display: none;">' + domStr + '</div>'
+  var newDiv = document.createElement('div');
+  newDiv.id = popWindowId;
+  newDiv.className = popWindowId;
+  newDiv.style.display = 'none';
+  newDiv.innerHTML = domStr;
+  document.body.appendChild(newDiv);
+  popWindow = document.getElementById(popWindowId);
 }
-// alert(document.getElementById('popWindow'));
 
 var slideLevel = 1;
 if (document.body.childElementCount <= 3) {
@@ -45,7 +48,7 @@ function collectToSlideContents(maxLevel, curLevel, nodeList) {
     if (curNode.tagName === 'BR' || curNode.tagName === 'HR' || curNode.tagName === 'SCRIPT') {
       continue;
     }
-    if (curNode.classList.contains('popWindow')) {
+    if (curNode.classList.contains(popWindowId)) {
       break;
     }
     if (curLevel >= maxLevel) {
@@ -156,7 +159,6 @@ function updateSlideIndex(targetNode) {
 
 window.addEventListener('click', function (evt) {
   if (evt.detail === 3) {
-    // alert("triple click!");
     // console.log('triple click!');
     chrome.storage.sync.get('tripleClickEnabled', function(data) {
       if(data.tripleClickEnabled){
