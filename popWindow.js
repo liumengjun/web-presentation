@@ -1,4 +1,4 @@
-const popWindowId = 'popWindowLmj1e9q2hbsGdh9IEOJVS27GDQLAREHovry';
+const popWindowId = 'popWindowLmj1e9q2hVy';
 const containerKeyPrefix = 'show_container:';
 function showPopDiv(content) {
   document.getElementById(popWindowId).style.display = 'block';
