@@ -107,6 +107,26 @@ function showPreviousSlideContent() {
   showSlideContent();
 }
 
+function increaseFontSize() {
+  let innerNodes = document.getElementById(popWindowId + 'ContentInner').childNodes;
+  if (!innerNodes || innerNodes.length != 1 || !innerNodes[0].style) {
+    return;
+  }
+  let oldFontSize = innerNodes[0].style.fontSize || innerNodes[0].computedStyleMap().get('font-size');
+  let iOldFontSize = oldFontSize.value || parseInt(oldFontSize);
+  innerNodes[0].style.fontSize = (iOldFontSize + 1) + 'px';
+}
+
+function decreaseFontSize() {
+  let innerNodes = document.getElementById(popWindowId + 'ContentInner').childNodes;
+  if (!innerNodes || innerNodes.length != 1 || !innerNodes[0].style) {
+    return;
+  }
+  let oldFontSize = innerNodes[0].style.fontSize || innerNodes[0].computedStyleMap().get('font-size');
+  let iOldFontSize = oldFontSize.value || parseInt(oldFontSize);
+  innerNodes[0].style.fontSize = (iOldFontSize - 1) + 'px';
+}
+
 function getCustomizedContainer(conf) {
   var id = conf.id;
   var tagName = conf.tagName;
@@ -261,6 +281,26 @@ window.addEventListener('keyup', function (evt) {
   if (evt.altKey && evt.keyCode === 83) { // Alt + S
     if (popWindow.style.display === 'none') {
       showSlideContent();
+    }
+  }
+  if (evt.shiftKey && evt.keyCode === 38 || evt.keyCode === 37) { // (Shift + ↑) || ←
+    if (popWindow.style.display !== 'none') {
+      showPreviousSlideContent();
+    }
+  }
+  if (evt.shiftKey && evt.keyCode === 40 || evt.keyCode === 39) { // (Shift + ↓) || →
+    if (popWindow.style.display !== 'none') {
+      showNextSlideContent();
+    }
+  }
+  if (evt.altKey && evt.keyCode === 187) { // Alt + '+'
+    if (popWindow.style.display !== 'none') {
+      increaseFontSize();
+    }
+  }
+  if (evt.altKey && evt.keyCode === 189) { // Alt + '-'
+    if (popWindow.style.display !== 'none') {
+      decreaseFontSize();
     }
   }
 });
