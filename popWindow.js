@@ -107,24 +107,28 @@ function showPreviousSlideContent() {
   showSlideContent();
 }
 
-function increaseFontSize() {
-  let innerNodes = document.getElementById(popWindowId + 'ContentInner').childNodes;
+function _getContentNode() {
+  let innerCon = document.getElementById(popWindowId + 'ContentInner');
+  let innerNodes = innerCon.childNodes;
   if (!innerNodes || innerNodes.length != 1 || !innerNodes[0].style) {
-    return;
+    return innerCon;
   }
-  let oldFontSize = innerNodes[0].style.fontSize || innerNodes[0].computedStyleMap().get('font-size');
-  let iOldFontSize = oldFontSize.value || parseInt(oldFontSize);
-  innerNodes[0].style.fontSize = (iOldFontSize + 1) + 'px';
+  return innerNodes[0];
+}
+
+function _getFontSize(node) {
+  let fontSize = node.style.fontSize || node.computedStyleMap().get('font-size');
+  return fontSize.value || parseInt(fontSize);
+}
+
+function increaseFontSize() {
+  let innerNode = _getContentNode();
+  innerNode.style.fontSize = (_getFontSize(innerNode) + 1) + 'px';
 }
 
 function decreaseFontSize() {
-  let innerNodes = document.getElementById(popWindowId + 'ContentInner').childNodes;
-  if (!innerNodes || innerNodes.length != 1 || !innerNodes[0].style) {
-    return;
-  }
-  let oldFontSize = innerNodes[0].style.fontSize || innerNodes[0].computedStyleMap().get('font-size');
-  let iOldFontSize = oldFontSize.value || parseInt(oldFontSize);
-  innerNodes[0].style.fontSize = (iOldFontSize - 1) + 'px';
+  let innerNode = _getContentNode();
+  innerNode.style.fontSize = (_getFontSize(innerNode) - 1) + 'px';
 }
 
 function getCustomizedContainer(conf) {
